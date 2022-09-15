@@ -56,20 +56,22 @@ d. In which quarter sales was minimum
 
 
 e. In which country sales was maximum and in which country sales was minimum
-      with country_sale as (SELECT country,sum(sales) as total_sales FROM sales_order_data_orc GROUP BY country)
-    > SELECT country,total_sales FROM country_sale ORDER BY total_sales desc limit 1;
 
-      country	total_sales
-      USA	           3627982.825744629
-
-    with country_sale as (SELECT country,sum(sales) as total_sales FROM sales_order_data_orc GROUP BY country)
+   with country_sale as (SELECT country,sum(sales) as total_sales FROM sales_order_data_orc GROUP BY country)
+    > SELECT country,total_sales FROM country_sale ORDER BY total_sales desc limit 1
+    > UNION ALL
     > SELECT country,total_sales FROM country_sale ORDER BY total_sales limit 1;
-    country	total_sales
-    Ireland	57756.43029785156
+
+    _u1.country	_u1.total_sales
+    Ireland	       57756.43029785156
+     USA	       3627982.825744629
+
 
 
 
 f. Calculate quarterly sales for each city
+
+    Note: only query bez result is too big
 
     SELECT CITY, qtr_id, sum(sales) FROM sales_order_data_orc GROUP BY city,qtr_id;
 
