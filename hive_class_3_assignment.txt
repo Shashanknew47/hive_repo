@@ -4,7 +4,7 @@
 
 3. Create a internal hive table "sales_order_csv" which will store csv data sales_order_csv .. make sure to skip header row while creating table
 
-4. Load data from hdfs path into "sales_order_csv" 
+4. Load data from hdfs path into "sales_order_csv"
 
 5. Create an internal hive table which will store data in ORC format "sales_order_orc"
 
@@ -14,7 +14,7 @@
 Perform below menioned queries on "sales_order_orc" table :
 
 a. Calculate total sales per year
-   
+
       SELECT year_id, cast(sum(sales) as int) as total_sales FROM sales_order_data_orc GROUP BY year_id;
 
 year_id	total_sales
@@ -26,12 +26,12 @@ b. Find a product for which maximum orders were placed
 
       with total_orders as (SELECT productline, count(productline) as total_s FROM sales_order_data_orc GROUP BY productline)
     > SELECT productline FROM (SELECT productline,total_s FROM total_orders ORDER BY total_s DESC) as p limit 1;
-     
+
        OK
 
        productline
        Classic Cars
-      
+
 
 
 
@@ -50,35 +50,39 @@ d. In which quarter sales was minimum
 
     WITH quater_sales as (select cast(sum(sales) as int) as total_sales, qtr_id FROM sales_order_data_orc GROUP BY qtr_id order by qtr_id)
     > SELECT qtr_id FROM (SELECT qtr_id,total_sales FROM quater_sales  ORDER BY total_sales  limit 1) as minimum_quater_sales;
-     
+
      qtr_id
       3
 
 
 e. In which country sales was maximum and in which country sales was minimum
-      
-   
+      with country_sale as (SELECT country,sum(sales) as total_sales FROM sales_order_data_orc GROUP BY country)
+    > SELECT country,total_sales FROM country_sale ORDER BY total_sales desc limit 1;
+
+      country	total_sales
+      USA	           3627982.825744629
+
+    with country_sale as (SELECT country,sum(sales) as total_sales FROM sales_order_data_orc GROUP BY country)
+    > SELECT country,total_sales FROM country_sale ORDER BY total_sales limit 1;
+    country	total_sales
+    Ireland	57756.43029785156
+
+
 
 f. Calculate quarterly sales for each city
-   
+
+    SELECT CITY, qtr_id, sum(sales) FROM sales_order_data_orc GROUP BY city,qtr_id;
+
 
 
 h. Find a month for each year in which maximum number of quantities were sold
 
      hive> with month_sales as (SELECT year_id, month_id, sum(quantityordered) as total_sales   FROM sales_order_data_orc GROUP BY year_id, month_id)
-    > SELECT year_id, month_id, total_sales 
-    > FROM (SELECT year_id, month_id, total_sales, 
-    >  max(total_sales) over ( partition by year_id) as yearly_sales FROM month_sales) as sales
+    > SELECT year_id, month_id, total_sales
+    > FROM (SELECT year_id, month_id, total_sales, max(total_sales) over ( partition by year_id) as yearly_sales FROM month_sales) as sales
     >       WHERE total_sales = yearly_sales;
 
 year_id	month_id	total_sales
 2003	      11	        10179
 2004	      11	        10678
 2005	      5	        4357
-
-
-
-
-
-
- 
