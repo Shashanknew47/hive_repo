@@ -1,0 +1,52 @@
+CREATE TABLE parking_violations
+ (
+
+    index int,
+    summon_number int,
+    plate_id string,
+    registration_state string,
+    plate_type string,
+    issue_date string,
+    violation_code string,
+    vehicle_body_type string,
+    vehicle_make string,
+    issuing_agency string,
+    street_code_1 string,
+    street_code_2 string,
+    street_code_3 string,
+    vehicle_expiration_date string,
+    vehicle_location string,
+    violation_precinct string,
+    issuer_precinct string,
+    issue_code string,
+    issue_command string,
+    issuer_squad string,
+    violation_time string,
+    time_first_observed string,
+    violation_county string,
+    violation_infront_or_opposite string,
+    house_number string,
+    street_name string,
+    intersection_street string,
+    date_first_observed string,
+    law_section int,
+    sub_division string,
+    violation_legal_code string,
+    days_parking_in_effect string,
+    from_hours_in_effect string,
+    to_hours_in_effect string,
+    vehicle_color string,
+    unregistered_vehicle string,
+    vehicle_year int,
+    meter_number string,
+    feet_from_curb string,
+    violation_post_code string,
+    violation_description string,
+    no_standing_or_stopping_violation string,
+    hydrant_violation string,
+    double_parking_violation string
+     )
+
+row format delimited
+fields TERMINATED by ','
+tblproperties ("skip.header.line.count"="1");
