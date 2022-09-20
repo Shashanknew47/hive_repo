@@ -65,10 +65,15 @@ Note: both files are csv files.
 
 
 14. Find the number of chat on which they have received a feedback
-          
+        => This should be total number of feedbacks
+             SELECT sum(feedback) as total_feedback FROM agent_performance;
+                9259
+
+
 
 
 15. Total contribution hour for each and every agents weekly basis
+
 
 
 
