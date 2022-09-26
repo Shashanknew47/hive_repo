@@ -1,4 +1,4 @@
-CREATE TABLE parking_violations
+CREATE TABLE parking_violations_orc
  (
 
     summon_number string,
@@ -46,6 +46,5 @@ CREATE TABLE parking_violations
     double_parking_violation string
      )
 
-row format delimited
-fields TERMINATED by ','
-tblproperties ("skip.header.line.count"="1");
+stored as orc;
+

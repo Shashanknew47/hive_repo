@@ -1,9 +1,9 @@
-CREATE TABLE parking_violations
+CREATE TABLE parking_violations_part
  (
 
-    summon_number string,
+    index int,
+    summon_number int,
     plate_id string,
-    registration_state string,
     plate_type string,
     issue_date string,
     violation_code string,
@@ -45,7 +45,4 @@ CREATE TABLE parking_violations
     hydrant_violation string,
     double_parking_violation string
      )
-
-row format delimited
-fields TERMINATED by ','
-tblproperties ("skip.header.line.count"="1");
+    PARTITIONED BY (registration_state string);

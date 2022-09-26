@@ -10,18 +10,43 @@ Note: both files are csv files.
 
 
 1. Create a schema based on the given dataset
+       CREATE TABLE agent_performance_partition
+    >   (
+    >      id int,
+    >      date string,
+    >      total_chats int,
+    >      average_response_time string,
+    >      average_resolution_time string,
+    >      rating float,
+    >      feedback int
+    >      )
+
+    row format DELIMITED
+    fields TERMINATED by ',';
+
+
+
 2. Dump the data inside the hdfs in the given schema location.
+
+
+
+
+
 3. List of all agents' names.
+    SELECT agent_name FROM agent_performance_part_bucket
+
 4. Find out agent average rating.
 
-  SELECT avg(rating) as avg_rating FROM agent_performance;
+  SELECT avg(rating) as avg_rating FROM agent_performance_part_bucket;
     avg_rating
     1.4609629649255012
 
 
 5. Total working days for each agents
      30 days
-    with unique_table as (SELECT distinct agent_name, date FROM agent_performance)
+
+
+    with unique_table as (SELECT distinct agent_name, date FROM agent_performance_part_bucket)
     > SELECT agent_name, count(date) FROM unique_table;
 
 
@@ -29,6 +54,7 @@ Note: both files are csv files.
 6. Total query that each agent have taken
      Note : considering  each chat as a query
      SELECT agent_name, sum(total_chats) FROM agent_performance Group by agent_name;
+
 
 
 
@@ -53,7 +79,52 @@ Note: both files are csv files.
           8976
 
 
+
+
+CREATE TABLE agent_performance
+    (
+        id int,
+        week int,
+        response_time int,
+        resolution_time int
+    )
+    stored as orc;
+
+=========================================================================================
+    > INSERT INTO agent_support
+    > select transform(id,date,average_response_time,average_resolution_time)
+    > using 'python final.py' as (id int,week int, response_time int, resolution_time int)
+    > FROM agent_performance;
+
+=============================================================================================
+
+ SELECT p.id,p.agent_name,p.date,s.week,s.response_time,s.resolution_time
+    > FROM agent_performance as p join agent_support as s
+    > on p.id = s.id
+
+==========================================================================
+
+SELECT p.agent_name,s.week,sum(s.response_time)
+    > FROM agent_performance as p join agent_support as s
+    > on p.id = s.id
+    > GROUP BY
+    > p.agent_name,
+    > s.week;
+
+
+=======================================================
+SELECT p.agent_name,s.week,count(s.agent_name),sum(s.response_time)
+    > FROM agent_performance as p join agent_support as s
+    > on p.id = s.id
+    > GROUP BY
+    > p.agent_name,
+    > s.week;
+
+
+
+
 12. average weekly response time for each agent
+
 
 
 
@@ -78,12 +149,58 @@ Note: both files are csv files.
 
 
 
+
 16. Perform inner join, left join and right join based on the agent column and after joining the table export that data into your local system.
 
 
 
 
+
+
+
+
 17. Perform partitioning on top of the agent column and then on top of that perform bucketing for each partitioning.
+
+
+        CREATE TABLE agent_performance_partition
+    >   (
+    >      id int,
+    >      date string,
+    >      total_chats int,
+    >      average_response_time string,
+    >      average_resolution_time string,
+    >      rating float,
+    >      feedback int
+    >      )
+    >   partitioned by (agent_name string);
+
+
+       hive.exec.dynamic.partition.mode=nonstrict;
+
+       INSERT OVERWRITE TABLE agent_performance_partition PARTITION(agent_name)
+       SELECT id, date, total_chats, average_response_time, average_resolution_time, rating, feedback,agent_name
+        FROM agent_performance;
+
+
+
+
+        CREATE TABLE agent_performance_partition
+    >   (
+    >      id int,
+    >      date string,
+    >      total_chats int,
+    >      average_response_time string,
+    >      average_resolution_time string,
+    >      rating float,
+    >      feedback int,
+           agent_name
+    >      )
+    >      clustered by (id)
+    >      sorted by (id)
+           into 3 buckets;
+
+     INSERT OVERWRITE table agent_performance_part_bucket SELECT * FROM agent_performance_partition;
+
 
 
 
