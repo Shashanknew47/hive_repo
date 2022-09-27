@@ -99,37 +99,56 @@ CREATE TABLE agent_performance
 =============================================================================================
 
  SELECT p.id,p.agent_name,p.date,s.week,s.response_time,s.resolution_time
-    > FROM agent_performance as p join agent_support as s
-    > on p.id = s.id
+     FROM agent_performance as p join agent_support as s
+     on p.id = s.id
+     limit 50;
 
 ==========================================================================
-
-SELECT p.agent_name,s.week,sum(s.response_time)
-    > FROM agent_performance as p join agent_support as s
-    > on p.id = s.id
-    > GROUP BY
-    > p.agent_name,
-    > s.week;
-
-
-=======================================================
-SELECT p.agent_name,s.week,count(s.agent_name),sum(s.response_time)
-    > FROM agent_performance as p join agent_support as s
-    > on p.id = s.id
-    > GROUP BY
-    > p.agent_name,
-    > s.week;
 
 
 
 
 12. average weekly response time for each agent
 
+    SELECT
+    agent_name,
+    sum(r_time)/ count(agent_name) as average_agent_week_response_time
 
+
+    FROM
+     ( SELECT
+            p.agent_name,s.week,sum(s.response_time) as r_time
+        FROM
+                agent_performance as p join agent_support as s
+                on p.id = s.id
+        GROUP BY
+            p.agent_name,
+            s.week ) as week_r_time
+
+    GROUP BY
+        agent_name
 
 
 
 13. average weekly resolution time for each agents
+
+    SELECT
+    agent_name,
+    sum(r_time)/ count(agent_name) as average_agent_week_response_time
+
+
+    FROM
+     ( SELECT
+            p.agent_name,s.week,sum(s.resolution_time) as r_time
+        FROM
+                agent_performance as p join agent_support as s
+                on p.id = s.id
+        GROUP BY
+            p.agent_name,
+            s.week ) as week_r_time
+
+    GROUP BY
+        agent_name
 
 
 
