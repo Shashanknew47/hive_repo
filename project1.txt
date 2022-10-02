@@ -10,7 +10,8 @@ Note: both files are csv files.
 
 
 1. Create a schema based on the given dataset
-       CREATE TABLE agent_performance_partition
+
+       CREATE TABLE agent_performance
     >   (
     >      id int,
     >      date string,
@@ -32,6 +33,8 @@ Note: both files are csv files.
 
 
 
+
+
 3. List of all agents' names.
     SELECT agent_name FROM agent_performance_part_bucket
 
@@ -47,7 +50,7 @@ Note: both files are csv files.
 
 
     with unique_table as (SELECT distinct agent_name, date FROM agent_performance_part_bucket)
-    > SELECT agent_name, count(date) FROM unique_table;
+     SELECT agent_name, count(date) as working_day FROM unique_table GROUP BY agent_name;
 
 
 
@@ -81,7 +84,7 @@ Note: both files are csv files.
 
 
 
-CREATE TABLE agent_performance
+CREATE TABLE agent_support
     (
         id int,
         week int,
@@ -110,10 +113,10 @@ CREATE TABLE agent_performance
 
 12. average weekly response time for each agent
 
-    SELECT
-    agent_name,
-    sum(r_time)/ count(agent_name) as average_agent_week_response_time
 
+    SELECT
+        agent_name,
+        sum(r_time)/ count(agent_name) as average_agent_week_response_time
 
     FROM
      ( SELECT
@@ -133,8 +136,8 @@ CREATE TABLE agent_performance
 13. average weekly resolution time for each agents
 
     SELECT
-    agent_name,
-    sum(r_time)/ count(agent_name) as average_agent_week_response_time
+        agent_name,
+        sum(r_time)/ count(agent_name) as average_agent_week_resolution_time
 
 
     FROM
